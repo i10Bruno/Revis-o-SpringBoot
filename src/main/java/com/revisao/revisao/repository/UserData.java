@@ -1,10 +1,15 @@
 package com.revisao.revisao.repository;
 
 import com.revisao.revisao.domain.User;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
+//diz para o spring gerenciar essa classe injeção de dependencia e  Inversão de Controle
+@Component
 public class UserData {
     //Você não pode fazer a referência da lista (minhaLista) apontar para uma nova lista.
 private final List<User> USERS = new ArrayList<>();
