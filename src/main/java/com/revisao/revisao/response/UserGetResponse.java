@@ -1,11 +1,11 @@
-package com.revisao.revisao.request;
+package com.revisao.revisao.response;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UserPutRequest {
+public class UserGetResponse {
     private Long id;
     private String firstName;
     private String lastName;
