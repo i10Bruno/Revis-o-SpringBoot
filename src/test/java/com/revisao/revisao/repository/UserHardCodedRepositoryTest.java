@@ -108,6 +108,27 @@ class UserHardCodedRepositoryTest {
 
 
     }
+    @Test
+    @DisplayName("update updates an user")
+    @Order(7)
+    void update_UpdatesUser_WHenSuccesfull() {
+        BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
+        var expected = this.UserList.getFirst();
+        expected.setFirstName("neymar777");
+        repository.update(expected);
+
+        Assertions.assertThat(this.UserList).contains(expected);
+
+        var useruptadedoptional = repository.findByid(expected.getId());
+
+        Assertions.assertThat(useruptadedoptional).isPresent();
+
+
+        Assertions.assertThat(useruptadedoptional.get())
+                .isEqualTo(expected);
+
+
+    }
 
 
 }
