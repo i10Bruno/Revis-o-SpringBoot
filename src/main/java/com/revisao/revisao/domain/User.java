@@ -2,13 +2,12 @@ package com.revisao.revisao.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 //@builder simplifica  a criação de obj em java
 @Builder
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 //comparar obj pelos atributos  e não pela memoria
