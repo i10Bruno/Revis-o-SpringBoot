@@ -3,6 +3,7 @@ package com.revisao.revisao.controller;
 
 import com.revisao.revisao.Mapper.UserMapper;
 import com.revisao.revisao.request.UserPostRequest;
+import com.revisao.revisao.request.UserPutRequest;
 import com.revisao.revisao.response.UserGetResponse;
 import com.revisao.revisao.response.UserPostResponse;
 import com.revisao.revisao.service.UserService;
@@ -55,16 +56,14 @@ public class UserController {
 
     }
 
+    @PutMapping
 
+    public ResponseEntity<Void> update(@RequestBody UserPutRequest user){
+        var users=mapper.toUserPut(user);
 
+         service.update(users);
+        return ResponseEntity.noContent().build();
 
-
-
-
-
-
-
-
-
+    }
 
 }
