@@ -14,8 +14,6 @@ public class UserHardCodedRepository {
 
     private final UserData userData;
 
-
-
     public List<User> findAll(){
 
         return userData.getUSERS();

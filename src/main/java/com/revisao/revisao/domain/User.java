@@ -17,9 +17,9 @@ public class User {
     @EqualsAndHashCode.Include
     private Long id;
     // A anotação mapeia o campo 'firstName' para 'first_name' no JSON
-    @JsonProperty("fist_name")
+   // @JsonProperty("fist_name")
     private String firstName;
-    @JsonProperty("last_name")
+  //  @JsonProperty("last_name")
     private String lastName;
     private String email;
 

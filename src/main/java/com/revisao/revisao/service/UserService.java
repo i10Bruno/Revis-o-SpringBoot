@@ -17,7 +17,7 @@ public class UserService {
 
 
     public List<User>findAll(String name){
-        return name==null?repository.findAll():repository.findByName(name);
+        return name==null ? repository.findAll():repository.findByName(name);
     }
 
     public User findByid(Long id){
