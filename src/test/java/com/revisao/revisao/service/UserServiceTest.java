@@ -5,6 +5,7 @@ import com.revisao.revisao.domain.User;
 import com.revisao.revisao.repository.UserHardCodedRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -134,6 +135,36 @@ class UserServiceTest {
                 .isInstanceOf(ResponseStatusException.class);
 
     }
+
+    @Test
+    @DisplayName("uptate updates a user")
+    @Order(9)
+    void update_updatesProducer_WhenSuccesful() {
+        var userToUpdate = UserList.getFirst();
+        userToUpdate.setFirstName("ibra");
+        BDDMockito.when(repository.findByid(userToUpdate.getId())).thenReturn(Optional.of(userToUpdate));
+
+        assertThatNoException()
+                .isThrownBy(() -> service.update(userToUpdate));
+
+
+    }
+    @Test
+    @DisplayName("update throws ResponseStatusException when user is not found")
+    @Order(10)
+    void update_ThrowsResponseStatusException_whenProducerIsNotFound() {
+        var userToUpdate = UserList.getFirst();
+        BDDMockito.when(repository.findByid(ArgumentMatchers.anyLong())).thenReturn(Optional.empty());
+        assertThatException()
+                .isThrownBy(() -> service.update(userToUpdate))
+                .isInstanceOf(ResponseStatusException.class);
+
+
+
+
+
+    }
+
 
 
 
