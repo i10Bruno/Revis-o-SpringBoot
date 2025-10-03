@@ -26,7 +26,7 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<List<UserGetResponse>> listAll(@RequestBody(required = false) String name){
+    public ResponseEntity<List<UserGetResponse>> listAll(@RequestParam(name = "firstName", required = false) String name){
         var user = service.findAll(name);
         var userGetResponseList=mapper.toUserGetResponseList(user);
 

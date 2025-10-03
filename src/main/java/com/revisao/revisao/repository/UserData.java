@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class UserData {
     //Você não pode fazer a referência da lista (minhaLista) apontar para uma nova lista.
-private final List<User> USERS = new ArrayList<>();
+    private final List<User> USERS = new ArrayList<>();
 
     {
         var neymar = User.builder().id(1L).firstName("neymar").lastName("jr").email("neymarjr@gmail.com").build();

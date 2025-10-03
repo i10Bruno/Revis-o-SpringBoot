@@ -69,7 +69,7 @@ class UserControllerTest {
     @Test
     @DisplayName("GET v1/user return a list whith all user when arguments is null")
     @Order(1)
-    void findAll_ReturnsAllAnimes_WhenArgumentsIsNull() throws Exception {
+    void findAll_ReturnsAllUser_WhenArgumentsIsNull() throws Exception {
 
         BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
 
@@ -83,9 +83,14 @@ class UserControllerTest {
 
     }
     @Test
-    @DisplayName(" GET v1/Anime?param=r9 findAll returns List with found object when name exists")
+    @DisplayName(" GET v1/User?param=r9 findAll returns List with found object when name exists")
     @Order(2)
-    void findAll_ReturnsFoundAnimesInList_WhenNameIsFound() throws Exception {
+    void findAll_ReturnsFoundUserInList_WhenNameIsFound() throws Exception {
+        BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
+        String response = fileUtils.readResourceFile("user/get-user-r9-name-200.json");
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user").param("firstName","ronaldo"))
+                .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andExpect(content().json(response));
+
 
 
 
