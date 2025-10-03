@@ -22,6 +22,7 @@ public class UserService {
 
     public User findByid(Long id){
 
+
        return repository.findByid(id).orElseThrow(()->  new  ResponseStatusException(HttpStatus.NOT_FOUND,"User not found"));
 
     }
@@ -39,7 +40,7 @@ public class UserService {
     public  void update(User userpudate){
         var user = findByid(userpudate.getId());
 
-        repository.save(userpudate);
+        repository.save(user);
 
 
     }

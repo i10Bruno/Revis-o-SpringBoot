@@ -60,7 +60,6 @@ public class UserController {
 
     public ResponseEntity<Void> update(@RequestBody UserPutRequest user){
         var users=mapper.toUserPut(user);
-
          service.update(users);
         return ResponseEntity.noContent().build();
 

@@ -20,6 +20,7 @@ public class UserHardCodedRepository {
     }
 
     public Optional<User> findByid(Long id){
+        System.out.println("Procurando usuário com id=" + id);
 
         return userData.getUSERS().stream().filter(user -> user.getId().equals(id)).findFirst();
     }
