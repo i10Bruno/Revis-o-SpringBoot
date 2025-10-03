@@ -92,9 +92,45 @@ class UserControllerTest {
                 .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andExpect(content().json(response));
 
 
+    }
+    @Test
+    @DisplayName(" GET v1/user?name=x findALL returns Empty list when name is not found")
+    @Order(3)
+    void findAll_ReturnsEmptyList_WhenNameIsNotFound() throws Exception {
+        BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
+        String response = fileUtils.readResourceFile("user/get-user-x-name-200.json");
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user").param("firstName","x"))
+                .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andExpect(content().json(response));
+
 
 
     }
+    @Test
+    @DisplayName("GET v1/user/1 findByid returns a user with given id")
+    @Order(4)
+    void findByid_returnsUserById_WhenSucceful() throws Exception {
+
+        BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
+        var id=UserList.getFirst().getId();
+        String response = fileUtils.readResourceFile("user/get-user-by-id-200.json");
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user/{id}",id))
+                .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andExpect(content().json(response));
+
+
+    }
+    @Test
+    @DisplayName("GET v1/user/99   throws ResponseStatusException 404 when user is not found")
+    @Order(5)
+    void findByid_ThrowsResponseStatusException_WhenUserIsNotFound() throws Exception {
+        BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
+        var id = 99L;
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user/{id}",id))
+                .andDo(MockMvcResultHandlers.print()).andExpect(status().isNotFound()).andExpect(status().reason("User not found"));
+
+
+
+    }
+
 
 
 }
