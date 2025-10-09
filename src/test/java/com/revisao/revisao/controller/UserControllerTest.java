@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -76,7 +77,6 @@ class UserControllerTest {
     }
 
 
-
     @Test
     @DisplayName("GET v1/user return a list whith all user when arguments is null")
     @Order(1)
@@ -90,57 +90,61 @@ class UserControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/user"))
                 .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).
-                andExpect(content().json(response));;
+                andExpect(content().json(response));
+        ;
 
     }
+
     @Test
     @DisplayName(" GET v1/User?param=r9 findAll returns List with found object when name exists")
     @Order(2)
     void findAll_ReturnsFoundUserInList_WhenNameIsFound() throws Exception {
         BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
         String response = fileUtils.readResourceFile("user/get-user-r9-name-200.json");
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user").param("firstName","ronaldo"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user").param("firstName", "ronaldo"))
                 .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andExpect(content().json(response));
 
 
     }
+
     @Test
     @DisplayName(" GET v1/user?name=x findALL returns Empty list when name is not found")
     @Order(3)
     void findAll_ReturnsEmptyList_WhenNameIsNotFound() throws Exception {
         BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
         String response = fileUtils.readResourceFile("user/get-user-x-name-200.json");
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user").param("firstName","x"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user").param("firstName", "x"))
                 .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andExpect(content().json(response));
 
 
-
     }
+
     @Test
     @DisplayName("GET v1/user/1 findByid returns a user with given id")
     @Order(4)
     void findByid_returnsUserById_WhenSucceful() throws Exception {
 
         BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
-        var id=UserList.getFirst().getId();
+        var id = UserList.getFirst().getId();
         String response = fileUtils.readResourceFile("user/get-user-by-id-200.json");
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user/{id}",id))
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user/{id}", id))
                 .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andExpect(content().json(response));
 
 
     }
+
     @Test
     @DisplayName("GET v1/user/99   throws ResponseStatusException 404 when user is not found")
     @Order(5)
     void findByid_ThrowsResponseStatusException_WhenUserIsNotFound() throws Exception {
         BDDMockito.when(userData.getUSERS()).thenReturn(UserList);
         var id = 99L;
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user/{id}",id))
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/user/{id}", id))
                 .andDo(MockMvcResultHandlers.print()).andExpect(status().isNotFound()).andExpect(status().reason("User not found"));
 
 
-
     }
+
     @Test
     @DisplayName("POST v1/user  creates a producer")
     @Order(6)
@@ -148,16 +152,17 @@ class UserControllerTest {
 
         var request = fileUtils.readResourceFile("user/post-request-user-200.json");
         var response = fileUtils.readResourceFile("user/post-response-user-201.json");
-        var userTosave=userUtils.newUserToSave();
+        var userTosave = userUtils.newUserToSave();
         BDDMockito.when(repository.save(ArgumentMatchers.any())).thenReturn(userTosave);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/user").content(request)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated());
 
 
     }
+
     @Test
     @DisplayName("PUT v1/user updates a user")
     @Order(7)
@@ -170,6 +175,7 @@ class UserControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isNoContent());
     }
+
     @Test
     @DisplayName("PUT v1/user throws ResponseStatusException when user is not found")
     @Order(8)
@@ -186,6 +192,7 @@ class UserControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.status().reason("User not found")); // Mensagem de erro esperada
     }
+
     @Test
     @DisplayName("DELETE v1/user/{id} removes a user when successful")
     @Order(9)
@@ -199,6 +206,7 @@ class UserControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isNoContent()); // Espera 204 No Content para sucesso
     }
+
     @Test
     @DisplayName("DELETE v1/user/{id} throws ResponseStatusException when user is not found")
     @Order(10)
@@ -217,9 +225,9 @@ class UserControllerTest {
 
     @ParameterizedTest
     @MethodSource("postUserBadRequestSource")
-    @DisplayName("POST v1/users returns bad request when fields are empty")
+    @DisplayName("POST v1/users returns bad request when fields are Invalid")
     @Order(11)
-    void save_ReturnsBadRequest_WhenFieldsAreEmpty(String filename,List<String>errors) throws Exception {
+    void save_ReturnsBadRequest_WhenFieldsAreInvalid(String filename, List<String> errors) throws Exception {
 
         var request = fileUtils.readResourceFile("user/%s".formatted(filename));
 
@@ -241,24 +249,74 @@ class UserControllerTest {
                 .contains(errors);
     }
 
-    private static Stream<Arguments> postUserBadRequestSource(){
-        var firstNameError ="The field 'firstName' is required";
-        var lastNameError ="The field 'lastName' is required";
-        var emailError ="The field 'email' is required";
-        var emailInvalid="The e-mail is not valid";
-        var allErrors=List.of(firstNameError,lastNameError,emailError);
-        var emailinvalidError=Collections.singletonList(emailInvalid);
+    @ParameterizedTest
+    @MethodSource("putUserBadRequestSource")
+    @DisplayName("PUT v1/users returns bad request when fields are Invalid")
+    @Order(12)
+    void put_ReturnsBadRequest_WhenFieldsAreInvalid(String filename, List<String> errors) throws Exception {
+
+        var request = fileUtils.readResourceFile("user/%s".formatted(filename));
+
+        var mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                        .put("/v1/user")
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        var resolvedException = mvcResult.getResolvedException();
+
+        org.assertj.core.api.Assertions.assertThat(resolvedException).isNotNull();
 
 
-
-        return Stream.of(Arguments.of("post-request-user-empty-fields-400.json",allErrors),
-                Arguments.of("post-request-user-blank-fields-400.json",allErrors),
-                Arguments.of("post-request-user-invalid-email-400.json",emailinvalidError)
-
-
-                );
+        org.assertj.core.api.Assertions.assertThat(resolvedException.getMessage())
+                .contains(errors);
     }
 
+
+    private static Stream<Arguments> putUserBadRequestSource() {
+        var allErrors = allRequiredErrors();
+        allRequiredErrors().add(" The field 'id' cannot be null");
+        var emailinvalidError =emailRequiredErrors();
+
+        return Stream.of(Arguments.of("put-request-user-empty-fields-400.json", allErrors),
+                Arguments.of("put-request-user-blank-fields-400.json", allErrors),
+                Arguments.of("put-request-user-invalid-email-400.json", emailinvalidError)
+
+
+        );
+    }
+
+    private static Stream<Arguments> postUserBadRequestSource() {
+
+        var allErrors = allRequiredErrors();
+        var emailinvalidError =emailRequiredErrors();
+
+        return Stream.of(Arguments.of("post-request-user-empty-fields-400.json", allErrors),
+                Arguments.of("post-request-user-blank-fields-400.json", allErrors),
+                Arguments.of("post-request-user-invalid-email-400.json", emailinvalidError)
+
+
+        );
+    }
+
+    private static List<String> allRequiredErrors() {
+        var firstNameError = "The field 'firstName' is required";
+        var lastNameError = "The field 'lastName' is required";
+        var emailError = "The field 'email' is required";
+        var emailInvalid = "The e-mail is not valid";
+        return new ArrayList<>(List.of(firstNameError, lastNameError, emailError));
+
+    }
+
+    private static List<String> emailRequiredErrors() {
+
+        var emailInvalid = "The e-mail is not valid";
+
+        return Collections.singletonList(emailInvalid);
+    }
 
 
 }
