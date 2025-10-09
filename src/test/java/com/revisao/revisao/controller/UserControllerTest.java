@@ -9,6 +9,9 @@ import com.revisao.revisao.repository.UserHardCodedRepository;
 import com.revisao.revisao.service.UserService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,7 +28,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -210,6 +215,49 @@ class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().reason("User not found")); // Mensagem de erro esperada
     }
 
+    @ParameterizedTest
+    @MethodSource("postUserBadRequestSource")
+    @DisplayName("POST v1/users returns bad request when fields are empty")
+    @Order(11)
+    void save_ReturnsBadRequest_WhenFieldsAreEmpty(String filename,List<String>errors) throws Exception {
+
+        var request = fileUtils.readResourceFile("user/%s".formatted(filename));
+
+        var mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                        .post("/v1/user")
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        var resolvedException = mvcResult.getResolvedException();
+
+        org.assertj.core.api.Assertions.assertThat(resolvedException).isNotNull();
+
+
+        org.assertj.core.api.Assertions.assertThat(resolvedException.getMessage())
+                .contains(errors);
+    }
+
+    private static Stream<Arguments> postUserBadRequestSource(){
+        var firstNameError ="The field 'firstName' is required";
+        var lastNameError ="The field 'lastName' is required";
+        var emailError ="The field 'email' is required";
+        var emailInvalid="The e-mail is not valid";
+        var allErrors=List.of(firstNameError,lastNameError,emailError);
+        var emailinvalidError=Collections.singletonList(emailInvalid);
+
+
+
+        return Stream.of(Arguments.of("post-request-user-empty-fields-400.json",allErrors),
+                Arguments.of("post-request-user-blank-fields-400.json",allErrors),
+                Arguments.of("post-request-user-invalid-email-400.json",emailinvalidError)
+
+
+                );
+    }
 
 
 

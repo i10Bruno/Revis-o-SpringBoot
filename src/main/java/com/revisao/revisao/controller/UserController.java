@@ -7,6 +7,7 @@ import com.revisao.revisao.request.UserPutRequest;
 import com.revisao.revisao.response.UserGetResponse;
 import com.revisao.revisao.response.UserPostResponse;
 import com.revisao.revisao.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserPostResponse> save(@RequestBody UserPostRequest user){
+    public ResponseEntity<UserPostResponse> save(@RequestBody @Valid UserPostRequest user){
         var users = mapper.toUserPostrequest(user);
         var saves= service.save(users);
         var response=mapper.toUserPostResponse(saves);
@@ -58,7 +59,7 @@ public class UserController {
 
     @PutMapping
 
-    public ResponseEntity<Void> update(@RequestBody UserPutRequest user){
+    public ResponseEntity<Void> update(@RequestBody @Valid UserPutRequest user){
         var users=mapper.toUserPut(user);
          service.update(users);
         return ResponseEntity.noContent().build();
